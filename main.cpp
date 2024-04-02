@@ -100,11 +100,11 @@ public:
 
     friend std::istream &operator>>(std::istream &is, Staff &staff)
     {
-        std::cout<<"Meseria: "<<std::endl;
+        std::cout<<"Meseria: ";
         is >> staff.Meserie;
-        std::cout<<"Nume: "<<std::endl;
+        std::cout<<"Nume: ";
         is >> staff.Nume;
-        std::cout<<"Salariu: "<<std::endl;
+        std::cout<<"Salariu: ";
         is >> staff.Salariu;
 
         return is;
@@ -115,7 +115,7 @@ public:
     {
         out << "Meseria: " << staff.Meserie;
         out << " | Nume: " << staff.Nume;
-        out << " | Salariu" << staff.Salariu;
+        out << " | Salariu: " << staff.Salariu;
 
         return out;
     }
@@ -123,6 +123,11 @@ public:
     const int &getSalariu() const
     {
         return Salariu;
+    }
+
+    const std::string &getNume() const
+    {
+        return Nume;
     }
 
 };
@@ -150,10 +155,15 @@ public:
     friend std::ostream &operator<<(std::ostream  &out, const Echipe &echipe)
     {
         out << "Numele echipei: " << echipe.NumeEchipa << std::endl;
-        out << "Antrenor: "<< echipe.Antrenor<<" | Salariu:"<<echipe.SalariuAntrenor<<std::endl;
+        if(echipe.SalariuAntrenor!=0)
+            out << "Antrenor: "<< echipe.Antrenor<<" | Salariu: "<<echipe.SalariuAntrenor<<std::endl;
+        else
+            std::cout<<"Echipa nu are antenor!"<<std::endl;
 
         if(echipe.NumarStaff>0)
-        out << "Staff: "<<std::endl;
+            out << "Staff: "<<std::endl;
+        else
+            std::cout<<"Echipa nu are staff!"<<std::endl;
         for(int i=0;i<echipe.NumarStaff;i++)
             out << echipe.staff[i] << std::endl;
 
@@ -162,6 +172,8 @@ public:
             for (int i = 0; i < echipe.NumarJucatori; i++)
                 out << echipe.jucatori[i] << std::endl;
         }
+        else
+            std::cout<<"Echipa nu are jucatori!"<<std::endl;
         return out;
     }
 
@@ -200,6 +212,7 @@ public:
         this->ConcediereJucator(jucator.getNumeJucator());
 
     }
+
     //Suma salarilor staffului
     int BugetStaff()
     {
@@ -222,6 +235,19 @@ public:
         return s;
     }
 
+    //Suma salariilor jucatorilor
+    int BugetSalariiJucatori()
+    {
+        int s;
+        s=0;
+        for(int i=0;i<NumarJucatori;i++)
+            s=s+jucatori[i].getSalariu();
+
+        return s;
+    }
+
+
+
     void SchimbareAntrenor(const std::string &NumeAntrenor,const int &salariu)
     {
         Antrenor=NumeAntrenor;
@@ -243,7 +269,45 @@ public:
         return Antrenor;
     }
 
+    //Angajare staff
+    void AdaugareStaff(const Staff &staf)
+    {
+        NumarStaff++;
+        staff.push_back(staf);
+    }
 
+    //concediere Staff
+
+    void ConcediereStaff(const std::string &ConcedireStaff)
+    {
+        for(int i=0;i<NumarStaff;i++)
+            if(staff[i].getNume()==ConcedireStaff)
+            {
+                staff.erase(staff.begin()+i);
+                NumarStaff--;
+                break;
+            }
+    }
+
+    const Staff &getStaff(const int &numar) const
+    {
+        return staff[numar];
+    }
+
+    const int &getNumarStaff() const
+    {
+        return NumarStaff;
+    }
+
+    const Jucatori &getJucatori(const int &numar) const
+    {
+        return jucatori[numar];
+    }
+
+    const int &getNumarJucatori() const
+    {
+        return NumarJucatori;
+    }
 
 
 };
@@ -345,15 +409,112 @@ int main() {
 
                             }
                         }
-
+                break;
                     }
             case 2:
             {
+                int alg1;
+                bool n= true;
+                while (n)
+                {
+                    std::cout<<"1.Angajare nou membru staff"<<std::endl;
+                    std::cout<<"2.Concediere membru staff"<<std::endl;
+                    std::cout<<"3.Afisare buget staff"<<std::endl;
+                    std::cout<<"4.Afisare staff"<<std::endl;
+                    std::cout<<"5.Inapoi"<<std::endl<<std::endl;
+                    std::cout<<"Alege: "<<std::endl;
+                    std::cin>>alg1;
+                    switch (alg1)
+                    {
+                        case 1:
+                            {
+                                Staff staf;
+                                std::cin>>staf;
+                                echipa.AdaugareStaff(staf);
+                                break;
 
+                            }
+                        case 2:
+                            {
+                                std::string Nume;
+                                std::cout<<"Introduceti numele angajatului pe care doriti sa il concediati: ";
+                                std::cin>>Nume;
+                                echipa.ConcediereStaff(Nume);
+                                break;
+                            }
+                        case 3:
+                            {
+                                std::cout<<"Bugetul staff-ului este: "<<echipa.BugetStaff()<<std::endl;
+                                break;
+                            }
+                        case 4:
+                            {
+                                for(int i=0;i<echipa.getNumarStaff();i++)
+                                    std::cout<<echipa.getStaff(i)<<std::endl;
+                                break;
+                            }
+                        case 5:
+                            {
+                                n= false;
+                                break;
+                            }
+                    }
+                }
+                break;
             }
             case 3:
             {
+                int agl1;
+                int n=true;
+                while(n)
+                {
 
+                    std::cout<<"1.Angajare nou jucator"<<std::endl;
+                    std::cout<<"2.Concediere jucator"<<std::endl;
+                    std::cout<<"3.Afisare buget jucatori"<<std::endl;
+                    std::cout<<"4.Afisare jucatori"<<std::endl;
+                    std::cout<<"5.Inapoi"<<std::endl<<std::endl;
+                    std::cout<<"Alege: "<<std::endl;
+
+                    std::cin>>agl1;
+                    switch (agl1)
+                    {
+                        case 1:
+                        {
+                            Jucatori juc1;
+                            std::cin>>juc1;
+                            echipa.AdaugareJucator(juc1);
+                            break;
+                        }
+                        case 2:
+                        {
+                            std::string Nume;
+                            std::cout<<"Numele jucatorului pe care doresti sa il concediezi: ";
+                            std::cin>>Nume;
+                            echipa.ConcediereJucator(Nume);
+                            break;
+
+                        }
+                        case 3:
+                        {
+                            std::cout<<"Bugetul pentru salariul jucatorilor este: "<<echipa.BugetSalariiJucatori()<<std::endl;
+                            break;
+                        }
+                        case 4:
+                        {
+                            for(int i=0;i<echipa.getNumarJucatori();i++)
+                                std::cout<<echipa.getJucatori(i)<<std::endl;
+                            break;
+                        }
+                        case 5:
+                        {
+                            n= false;
+                            break;
+                        }
+
+                    }
+                }
+                break;
             }
             case 4:
             {
@@ -373,44 +534,6 @@ int main() {
 
 
 
-
-
-    //sAS
-//    Jucatori juc1("Toma",100,100);
-//    Jucatori juc2("ana",100,100);
-//    Jucatori juc3("raluca",100,100);
-//
-//    Staff staff1("Bucatar","Ion",30);
-//    Staff staff2("Preparator Fizic","Eduard",20);
-//    Staff staff3("Naturist","Matei",45);
-//
-//
-//
-//    Echipe echipa2("Steaus","Iordanescu",1000,{staff1,staff2,staff3},3,3, {juc1,juc2,juc3});
-//    Echipe echipa1("arsenal","ronaldo",1000,{staff1,staff2},2,2,{juc2,juc3});
-//    echipa2.TransferJucator(echipa1,juc1);
-//    std::cout<<echipa2;
-//    std::cout<<echipa1;
-//    std::cout << echipa1.BugetSalarii()<<std::endl;
-//    echipa1.SchimbareAntrenor("Beligoool",10);
-//    std::cout<<echipa1;
-//    std::cout<<echipa1.BugetStaff();
-//
-//    Echipe ech;
-//    std::cin>>ech;
-//    ech.AdaugareJucator(juc1);
-//    ech.SchimbareAntrenor("Marian",110);
-//    std::cout<<ech;
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
     return 0;
 }
