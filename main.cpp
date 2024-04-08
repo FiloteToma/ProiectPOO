@@ -86,7 +86,6 @@ public:
 
 
 };
-
 class Staff{
 private:
     std::string Meserie;
